@@ -1,0 +1,5 @@
+- 👋 Hello, I'm @mateusjrcavalcanti
+- 👀 I'm interested in learning a little bit about everything
+- 🌱 I'm currently learning Laravel
+- 💞️ I'm looking to collaborate on automation projects in games, processes, programming and development
+- 📫 How to reach me: MateusJr#5171 mateusjrcavalcanti@outlook.com

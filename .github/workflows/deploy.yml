@@ -1,0 +1,98 @@
+name: Publicar site no GitHub Pages
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+env:
+  NODE_VERSION: 24
+  PNPM_VERSION: 12.8.1
+  NEXT_TELEMETRY_DISABLED: 1
+
+jobs:
+  build:
+    name: Validar e gerar site
+    runs-on: ubuntu-24.04
+
+    steps:
+      - name: Obter código
+        uses: actions/checkout@v7
+
+      - name: Configurar pnpm
+        uses: pnpm/action-setup@v6
+        with:
+          version: ${{ env.PNPM_VERSION }}
+
+      - name: Configurar Node.js
+        uses: actions/setup-node@v7
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: pnpm
+
+      - name: Configurar GitHub Pages
+        id: pages
+        uses: actions/configure-pages@v6
+
+      - name: Instalar dependências
+        run: pnpm install --frozen-lockfile
+
+      - name: Validar código
+        run: pnpm check
+
+      - name: Gerar site estático
+        env:
+          NEXT_PUBLIC_BASE_PATH: ${{ steps.pages.outputs.base_path }}
+          NEXT_PUBLIC_SITE_URL: ${{ steps.pages.outputs.base_url }}
+        run: pnpm build
+
+      - name: Validar artefato estático
+        run: |
+          test -f out/index.html
+          test -f out/favicon.ico
+          test -f out/logo.svg
+          test -f out/logo.png
+          test -f out/robots.txt
+          test -f out/sitemap.xml
+          test -f out/projetos/index.html
+          test -f out/projetos/robotica-educativa-univasf/index.html
+          test -f out/curriculo/index.html
+          test -f out/certificados/index.html
+          test -f out/blog/index.html
+          test -f out/blog/categorias/index.html
+          test -f out/blog/tags/index.html
+          test -f out/feed.xml
+          test -f out/knowledge.json
+          test -f out/llms.txt
+          find out/_next/static -type f -name '*.css' -print -quit | grep -q .
+          ! grep -R -E '@(theme|utility|apply)([[:space:]]|\{|\()' out/_next/static --include='*.css'
+          grep -R -q '\.flex{display:flex}' out/_next/static --include='*.css'
+          ! find out -path '*__static-export-placeholder*' -print -quit | grep -q .
+
+      - name: Enviar artefato do Pages
+        uses: actions/upload-pages-artifact@v5
+        with:
+          path: ./out
+
+  deploy:
+    name: Publicar site
+    needs: build
+    runs-on: ubuntu-24.04
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+
+    steps:
+      - name: Publicar no GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v5

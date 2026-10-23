@@ -13,35 +13,7 @@ export const projectCategoryLabels: Record<ProjectCategory, string> = {
   devops: "DevOps",
 };
 
-export const projects: Project[] = [
-  {
-    id: "robotica-educativa-univasf",
-    slug: "robotica-educativa-univasf",
-    category: "web",
-    title: "Robótica Educativa UNIVASF",
-    description:
-      "Plataforma web oficial da UNIVASF para democratização do ensino de robótica e programação em escolas públicas do Vale do São Francisco.",
-    image: "/projetos/robotica-educativa-univasf.png",
-    tags: [
-      "Next.js",
-      "React",
-      "TypeScript",
-      "Tailwind CSS",
-      "Vercel",
-      "UI/UX",
-      "Acessibilidade",
-      "Core Web Vitals",
-    ],
-    context: "Acadêmico",
-    status: "Concluído",
-    featured: true,
-    liveUrl: "https://robotica-educativa-univasf.vercel.app/",
-    githubUrl: "https://github.com/mateusjrcavalcanti",
-    year: "2026",
-  },
-];
-
-export const projectsSection = {
+const projectsSectionConfig = {
   id: "projetos",
   name: "Projetos",
   color: "#06b6d4",
@@ -56,7 +28,6 @@ export const projectsSection = {
   caseStudyLabel: "Ver estudo de caso →",
   subColors: projectCategoryColors,
   categoryLabels: projectCategoryLabels,
-  items: projects,
 } satisfies ContentSectionConfig & {
   allFilterLabel: string;
   countLabel: string;
@@ -64,7 +35,14 @@ export const projectsSection = {
   caseStudyLabel: string;
   subColors: typeof projectCategoryColors;
   categoryLabels: Record<ProjectCategory, string>;
-  items: Project[];
 };
 
-export type ProjectsSectionData = typeof projectsSection;
+export function createProjectsSection(items: Project[]) {
+  return {
+    ...projectsSectionConfig,
+    enabled: items.length > 0,
+    items,
+  };
+}
+
+export type ProjectsSectionData = ReturnType<typeof createProjectsSection>;

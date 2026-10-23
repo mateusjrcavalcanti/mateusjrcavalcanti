@@ -2,12 +2,10 @@
 
 import { useState, useEffect, useRef } from "react";
 import Image from "next/image";
+import Link from "next/link";
 import { Layers, ChevronLeft, ChevronRight, BookOpen } from "lucide-react";
-import type { ProjectCategory, ProjectsSectionData } from "@/data";
-import {
-  ProjectModal,
-  type Project,
-} from "@/components/projects/project-modal";
+import { withBasePath, type ProjectCategory, type ProjectsSectionData } from "@/data";
+import { projectPath } from "@/lib/routes";
 
 type FilterCategory = "all" | ProjectCategory;
 
@@ -16,11 +14,20 @@ export function ProjectsSection({
 }: {
   data: ProjectsSectionData;
 }) {
+  if (!projectSection.enabled) return null;
+
+  return <ProjectsSectionContent data={projectSection} />;
+}
+
+function ProjectsSectionContent({
+  data: projectSection,
+}: {
+  data: ProjectsSectionData;
+}) {
   const projects = projectSection.items;
   const categoryLabels = projectSection.categoryLabels;
   const categoryColors = projectSection.subColors;
   const [activeFilter, setActiveFilter] = useState<FilterCategory>("all");
-  const [selectedProject, setSelectedProject] = useState<Project | null>(null);
   const [isVisible, setIsVisible] = useState(false);
   const [canScrollLeft, setCanScrollLeft] = useState(false);
   const [canScrollRight, setCanScrollRight] = useState(true);
@@ -267,10 +274,9 @@ export function ProjectsSection({
                 {filteredProjects.map((project) => {
                   const color = categoryColors[project.category];
                   return (
-                    <button
+                    <Link
                       key={project.id}
-                      type="button"
-                      onClick={() => setSelectedProject(project)}
+                      href={projectPath(project.slug)}
                       className="group/card flex-shrink-0 w-[280px] sm:w-[320px] rounded-2xl overflow-hidden text-left focus:outline-none transition-all duration-500 border backdrop-blur-sm hover:-translate-y-2 block"
                       style={{
                         backgroundColor: "rgba(255, 255, 255, 0.03)",
@@ -292,7 +298,7 @@ export function ProjectsSection({
                       {/* Image */}
                       <div className="relative aspect-[16/10] overflow-hidden">
                         <Image
-                          src={project.image}
+                          src={withBasePath(project.image)}
                           alt={project.title}
                           fill
                           className="object-cover transition-transform duration-700 group-hover/card:scale-110"
@@ -369,7 +375,7 @@ export function ProjectsSection({
                           )}
                         </div>
                       </div>
-                    </button>
+                    </Link>
                   );
                 })}
               </div>
@@ -408,8 +414,8 @@ export function ProjectsSection({
               </span>
             </div>
 
-            <a
-              href="#projetos"
+            <Link
+              href="/projetos"
               className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl border font-semibold text-sm transition-all hover:-translate-y-0.5"
               style={{
                 borderColor: `${activeColor}50`,
@@ -418,16 +424,10 @@ export function ProjectsSection({
               }}
             >
               {projectSection.catalogLabel}
-            </a>
+            </Link>
           </div>
         </div>
       </section>
-
-      <ProjectModal
-        project={selectedProject}
-        onClose={() => setSelectedProject(null)}
-        categoryColors={categoryColors}
-      />
     </>
   );
 }

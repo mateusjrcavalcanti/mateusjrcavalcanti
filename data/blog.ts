@@ -1,19 +1,28 @@
 import type { BlogPost, ContentSectionConfig } from "./types";
 
-export const blogSection = {
+const blogSectionConfig = {
   id: "blog",
   name: "Blog",
   color: "#10b981",
   eyebrow: "Conteúdo",
   title: "Blog",
-  highlight: "& artigos",
+  highlight: "&",
+  suffix: "artigos",
   description:
     "Compartilho aprendizados, tutoriais e experiências sobre desenvolvimento.",
   ctaLabel: "Ver todos",
   mobileCtaLabel: "Ver todos os artigos",
-} satisfies ContentSectionConfig & { ctaLabel: string; mobileCtaLabel: string };
+} satisfies ContentSectionConfig & {
+  suffix: string;
+  ctaLabel: string;
+  mobileCtaLabel: string;
+};
 
-export type BlogSectionData = typeof blogSection;
+export function createBlogSection(items: BlogPost[]) {
+  return {
+    ...blogSectionConfig,
+    enabled: items.length > 0,
+  };
+}
 
-// Populated later from Markdown files in content/blog.
-export const blogPosts: BlogPost[] = [];
+export type BlogSectionData = ReturnType<typeof createBlogSection>;

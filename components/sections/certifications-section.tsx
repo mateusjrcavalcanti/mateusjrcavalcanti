@@ -30,6 +30,16 @@ export function CertificationsSection({
 }: {
   data: CertificationsSectionData;
 }) {
+  if (!data.enabled) return null;
+
+  return <CertificationsSectionContent data={data} />;
+}
+
+function CertificationsSectionContent({
+  data,
+}: {
+  data: CertificationsSectionData;
+}) {
   const ACCENT = data.color || "#ec4899";
   const sectionRef = useRef<HTMLElement>(null);
   const [isVisible, setIsVisible] = useState(false);
@@ -88,7 +98,8 @@ export function CertificationsSection({
           </div>
 
           <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-foreground mb-4 tracking-tight">
-            {data.title} <span style={{ color: ACCENT }}>{data.highlight}</span>
+            {data.title} <span style={{ color: ACCENT }}>{data.highlight}</span>{" "}
+            {data.suffix}
           </h2>
 
           <p className="text-sm sm:text-base text-muted-foreground max-w-3xl leading-relaxed">
@@ -197,7 +208,7 @@ export function CertificationsSection({
         {/* Ver todos os certificados button */}
         <div className="mt-10 flex justify-center">
           <Link
-            href={`#${data.id}`}
+            href="/certificados"
             className="inline-flex items-center gap-2.5 px-6 py-3 rounded-xl text-xs sm:text-sm font-semibold bg-secondary/80 hover:bg-secondary text-foreground border border-border/60 transition-all hover:border-primary/40 hover:-translate-y-0.5 shadow-sm group"
           >
             <span>

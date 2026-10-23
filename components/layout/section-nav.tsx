@@ -13,6 +13,7 @@ import {
   Cpu,
 } from "lucide-react";
 import type { SectionConfig } from "@/data";
+import { useActiveSection } from "./use-active-section";
 
 interface NavSection {
   id: string;
@@ -61,30 +62,12 @@ export function SectionNav({
       })),
     [sectionConfigs],
   );
-  const [activeSection, setActiveSection] = useState(
-    sectionConfigs[0]?.id ?? "",
-  );
+  const activeSection = useActiveSection(sectionConfigs);
   const [customProjectsColor, setCustomProjectsColor] = useState<string | null>(
     null,
   );
   const { resolvedTheme } = useTheme();
   const hydrated = useHydrated();
-
-  useEffect(() => {
-    const handleScroll = () => {
-      const scrollPos = window.scrollY + window.innerHeight / 2;
-      for (let i = data.length - 1; i >= 0; i--) {
-        const el = document.getElementById(data[i].id);
-        if (el && el.offsetTop <= scrollPos) {
-          setActiveSection(data[i].id);
-          break;
-        }
-      }
-    };
-    window.addEventListener("scroll", handleScroll);
-    handleScroll();
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, [data]);
 
   // Listen to dynamic colors dispatched by the Projects section
   useEffect(() => {

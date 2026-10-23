@@ -7,6 +7,12 @@ import type { ExperienceSectionData } from "@/data";
 import { formatExperiencePeriod } from "@/lib/utils";
 
 export function ExperienceSection({ data }: { data: ExperienceSectionData }) {
+  if (!data.enabled) return null;
+
+  return <ExperienceSectionContent data={data} />;
+}
+
+function ExperienceSectionContent({ data }: { data: ExperienceSectionData }) {
   const ACCENT = data.color;
   const experiences = [...data.items].sort((a, b) => {
     const getStartYear = (period: [string, string?]) => {
@@ -92,7 +98,8 @@ export function ExperienceSection({ data }: { data: ExperienceSectionData }) {
             {data.eyebrow}
           </div>
           <h2 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-foreground mb-3">
-            {data.title} <span style={{ color: ACCENT }}>{data.highlight}</span>
+            {data.title} <span style={{ color: ACCENT }}>{data.highlight}</span>{" "}
+            {data.suffix}
           </h2>
           <p className="text-lg text-muted-foreground max-w-2xl leading-relaxed">
             {data.description}

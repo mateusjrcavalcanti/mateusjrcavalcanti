@@ -4,7 +4,9 @@ import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { BookOpen, Calendar, Clock, ArrowRight } from "lucide-react";
-import type { BlogPost, BlogSectionData } from "@/data";
+import { resolveContentImage, type BlogPost, type BlogSectionData } from "@/data";
+import { blogPostPath } from "@/lib/routes";
+import { formatLongDate } from "@/lib/utils";
 
 interface BlogSectionProps {
   posts: BlogPost[];
@@ -12,6 +14,12 @@ interface BlogSectionProps {
 }
 
 export function BlogSection({ posts, section }: BlogSectionProps) {
+  if (!section.enabled) return null;
+
+  return <BlogSectionContent posts={posts} section={section} />;
+}
+
+function BlogSectionContent({ posts, section }: BlogSectionProps) {
   const ACCENT = section.color;
   const sectionRef = useRef<HTMLElement>(null);
   const [isVisible, setIsVisible] = useState(false);
@@ -72,14 +80,15 @@ export function BlogSection({ posts, section }: BlogSectionProps) {
             </div>
             <h2 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-foreground mb-2">
               {section.title}{" "}
-              <span style={{ color: ACCENT }}>{section.highlight}</span>
+              <span style={{ color: ACCENT }}>{section.highlight}</span>{" "}
+              {section.suffix}
             </h2>
             <p className="text-base text-muted-foreground max-w-2xl leading-relaxed">
               {section.description}
             </p>
           </div>
           <Link
-            href={`#${section.id}`}
+            href="/blog"
             className="hidden sm:inline-flex items-center gap-2 px-5 py-2.5 rounded-xl font-semibold text-sm transition-colors border"
             style={{
               backgroundColor: `${ACCENT}10`,
@@ -105,7 +114,7 @@ export function BlogSection({ posts, section }: BlogSectionProps) {
           {posts.map((post, i) => (
             <Link
               key={post.slug}
-              href={`#${section.id}`}
+              href={blogPostPath(post.slug)}
               className="group flex gap-3 p-3 rounded-xl border border-border/50 bg-card/50 backdrop-blur-sm transition-all duration-500 hover:shadow-md hover:shadow-primary/5 hover:-translate-y-0.5"
               style={{ transitionDelay: `${250 + i * 60}ms` }}
               onMouseEnter={(e) => {
@@ -118,7 +127,7 @@ export function BlogSection({ posts, section }: BlogSectionProps) {
               {/* Thumbnail */}
               <div className="relative w-20 h-20 sm:w-24 sm:h-24 rounded-lg overflow-hidden flex-shrink-0">
                 <Image
-                  src={post.image}
+                  src={resolveContentImage(post.image)}
                   alt={post.title}
                   fill
                   className="object-cover transition-transform duration-700 group-hover:scale-110"
@@ -143,7 +152,7 @@ export function BlogSection({ posts, section }: BlogSectionProps) {
                 <div className="flex items-center gap-3 text-[11px] text-muted-foreground mt-auto">
                   <span className="flex items-center gap-1">
                     <Calendar className="h-2.5 w-2.5" />
-                    {post.date}
+                    {formatLongDate(post.publishedAt)}
                   </span>
                   <span className="flex items-center gap-1">
                     <Clock className="h-2.5 w-2.5" />
@@ -163,7 +172,7 @@ export function BlogSection({ posts, section }: BlogSectionProps) {
         {/* Mobile CTA */}
         <div className="mt-6 sm:hidden text-center">
           <Link
-            href={`#${section.id}`}
+            href="/blog"
             className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl font-semibold text-sm transition-colors border"
             style={{
               backgroundColor: `${ACCENT}10`,

@@ -92,6 +92,7 @@ export const skillsSection = {
   highlight: "Técnicas",
   description:
     "Habilidades estruturadas por capacidades práticas de engenharia de software e hardware, comprovadas pelos projetos entregues e pela formação acadêmica.",
+  enabled: skillCategories.length > 0,
   items: skillCategories,
 } satisfies ContentSectionConfig & { items: SkillCategory[] };
 

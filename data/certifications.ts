@@ -59,11 +59,17 @@ export const certificationsSection = {
   color: "#ec4899",
   eyebrow: "Cursos & Certificações",
   title: "Aprendizado contínuo",
-  highlight: "& credenciais",
+  highlight: "&",
+  suffix: "credenciais",
   description:
     "Especializações práticas, licenças e cursos técnicos focados no domínio de ferramentas modernas, boas práticas de engenharia de software e infraestrutura.",
+  enabled: certifications.length > 0,
   ctaLabel: "Ver todos os certificados",
   items: certifications,
-} satisfies ContentSectionConfig & { ctaLabel: string; items: Certification[] };
+} satisfies ContentSectionConfig & {
+  suffix: string;
+  ctaLabel: string;
+  items: Certification[];
+};
 
 export type CertificationsSectionData = typeof certificationsSection;

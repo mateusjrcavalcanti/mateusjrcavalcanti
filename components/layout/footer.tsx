@@ -1,19 +1,20 @@
 import { Coffee, Contact as Linkedin } from "lucide-react";
+import Link from "next/link";
 import { SiGithub as Github } from "@icons-pack/react-simple-icons";
 import { contact, site } from "@/data";
 
 export function Footer({ className = "" }: { className?: string }) {
   return (
     <footer
-      className={`border-t border-border/30 bg-background py-16 ${className}`}
+      className={`border-t border-border/30 bg-background py-16 print:hidden ${className}`}
     >
       <div className="mx-auto max-w-7xl px-6 lg:px-8">
         <div className="flex flex-col items-center gap-8">
-          <a href="#hero" className="text-2xl font-bold tracking-tight">
+          <Link href="/#hero" className="text-2xl font-bold tracking-tight">
             <span className="text-primary">&lt;</span>
             {site.brand}
             <span className="text-primary">/&gt;</span>
-          </a>
+          </Link>
           <div className="flex items-center gap-4">
             <a
               href={contact.github}
@@ -36,7 +37,7 @@ export function Footer({ className = "" }: { className?: string }) {
           </div>
           <div className="flex flex-wrap items-center justify-center gap-6 text-sm text-muted-foreground">
             {site.footerLinks.map((link) => (
-              <a
+              <Link
                 key={link.href}
                 href={link.href}
                 className={
@@ -44,7 +45,7 @@ export function Footer({ className = "" }: { className?: string }) {
                 }
               >
                 {link.label}
-              </a>
+              </Link>
             ))}
           </div>
           <div className="flex flex-col items-center gap-2 text-center text-sm text-muted-foreground">

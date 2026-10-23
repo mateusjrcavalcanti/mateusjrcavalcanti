@@ -1,5 +1,16 @@
 export { cn } from "cn";
 
+const longDateFormatter = new Intl.DateTimeFormat("pt-BR", {
+  day: "numeric",
+  month: "long",
+  year: "numeric",
+  timeZone: "UTC",
+});
+
+export function formatLongDate(date: string): string {
+  return longDateFormatter.format(new Date(date));
+}
+
 export function formatExperiencePeriod(
   period: [string, string?],
   current?: boolean,

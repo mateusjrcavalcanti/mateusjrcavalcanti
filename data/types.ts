@@ -2,6 +2,7 @@ export interface SectionConfig {
   id: string;
   name: string;
   color: string;
+  enabled?: boolean;
 }
 
 export interface ContentSectionConfig extends SectionConfig {
@@ -25,7 +26,7 @@ export interface Project {
   category: ProjectCategory;
   title: string;
   description: string;
-  image: string;
+  image: `/${string}`;
   tags: string[];
   context: string;
   status: string;
@@ -71,9 +72,14 @@ export interface BlogPost {
   slug: string;
   title: string;
   image: string;
+  excerpt: string;
   category: string;
-  date: string;
+  tags: string[];
+  author: string;
+  publishedAt: string;
+  updatedAt?: string;
   readTime: string;
+  featured?: boolean;
 }
 
 export type SkillIconKey =

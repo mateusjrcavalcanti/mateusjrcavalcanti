@@ -1,11 +1,14 @@
 "use client";
 
 import { useEffect, useState, useSyncExternalStore } from "react";
+import Link from "next/link";
 import { Menu, Moon, Search, Sun, X } from "lucide-react";
 import { useTheme } from "next-themes";
 import { Button } from "@/components/ui/button";
+import { searchOpenEvent } from "@/components/command-palette";
 import { SiGithub as Github } from "@icons-pack/react-simple-icons";
 import { contact, site, type SectionConfig } from "@/data";
+import { useActiveSection } from "./use-active-section";
 
 const subscribeToHydration = () => () => {};
 
@@ -24,29 +27,22 @@ function sectionColor(sections: SectionConfig[], id: string) {
 export function Navigation({ data }: { data: SectionConfig[] }) {
   const [isScrolled, setIsScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
-  const [activeSection, setActiveSection] = useState(data[0]?.id ?? "");
+  const activeSection = useActiveSection(data);
   const [projectsColor, setProjectsColor] = useState<string | null>(null);
   const { resolvedTheme, setTheme } = useTheme();
   const hydrated = useHydrated();
-  const items = site.navigation;
+  const items = site.navigation.filter((item) =>
+    data.some((section) => section.id === item.sectionId),
+  );
 
   useEffect(() => {
-    const ids = data.map((section) => section.id);
     const onScroll = () => {
       setIsScrolled(window.scrollY > 20);
-      const position = window.scrollY + window.innerHeight / 2;
-      for (let index = ids.length - 1; index >= 0; index--) {
-        const element = document.getElementById(ids[index]);
-        if (element && element.offsetTop <= position) {
-          setActiveSection(ids[index]);
-          break;
-        }
-      }
     };
     window.addEventListener("scroll", onScroll, { passive: true });
     onScroll();
     return () => window.removeEventListener("scroll", onScroll);
-  }, [data]);
+  }, []);
   useEffect(() => {
     const onColor = (event: Event) =>
       setProjectsColor((event as CustomEvent<{ color: string }>).detail.color);
@@ -61,18 +57,18 @@ export function Navigation({ data }: { data: SectionConfig[] }) {
 
   return (
     <header
-      className={`fixed inset-x-0 top-0 z-50 transition-all duration-500 ${isScrolled ? "border-b border-border/50 bg-background/60 shadow-sm backdrop-blur-xl" : "bg-transparent"}`}
+      className={`fixed inset-x-0 top-0 z-50 transition-all duration-500 print:hidden ${isScrolled ? "border-b border-border/50 bg-background/60 shadow-sm backdrop-blur-xl" : "bg-transparent"}`}
     >
       <nav className="mx-auto max-w-7xl px-6 lg:px-8">
         <div className="flex h-16 items-center justify-between">
-          <a href="#hero" className="text-xl font-bold tracking-tight">
+          <Link href="/#hero" className="text-xl font-bold tracking-tight">
             <span style={{ color: activeColor }}>&lt;</span>
             {site.brand}
             <span style={{ color: activeColor }}>/&gt;</span>
-          </a>
+          </Link>
           <div className="hidden items-center gap-8 md:flex">
             {items.map((item) => (
-              <a
+              <Link
                 key={item.sectionId}
                 href={item.href}
                 className="text-sm font-medium transition-colors"
@@ -84,22 +80,22 @@ export function Navigation({ data }: { data: SectionConfig[] }) {
                 }}
               >
                 {item.label}
-              </a>
+              </Link>
             ))}
           </div>
           <div className="hidden items-center gap-2 md:flex">
-            <Button
-              variant="ghost"
-              size="sm"
-              className="h-9 rounded-full px-3 text-xs text-muted-foreground"
-              aria-label={`Idioma atual: ${site.locale}`}
+            <span
+              className="px-2 text-xs font-medium text-muted-foreground"
+              aria-label={`Idioma do site: ${site.locale}`}
             >
               {site.languageLabel}
-            </Button>
+            </span>
             <Button
               variant="outline"
               size="sm"
               className="h-9 gap-2 rounded-full border-border/60 bg-background/50 px-2.5 text-xs font-normal text-muted-foreground"
+              onClick={() => window.dispatchEvent(new Event(searchOpenEvent))}
+              aria-label="Buscar no site"
             >
               <Search className="size-3.5" />
               <span className="hidden lg:inline">{site.searchLabel}</span>
@@ -139,6 +135,15 @@ export function Navigation({ data }: { data: SectionConfig[] }) {
             <Button
               variant="ghost"
               size="icon"
+              onClick={() => window.dispatchEvent(new Event(searchOpenEvent))}
+              className="h-9 w-9 rounded-full"
+              aria-label="Buscar no site"
+            >
+              <Search className="size-4" />
+            </Button>
+            <Button
+              variant="ghost"
+              size="icon"
               onClick={() =>
                 setTheme(resolvedTheme === "dark" ? "light" : "dark")
               }
@@ -167,22 +172,22 @@ export function Navigation({ data }: { data: SectionConfig[] }) {
         {menuOpen && (
           <div className="rounded-b-2xl border-t border-border/50 bg-background/95 py-4 backdrop-blur-xl md:hidden">
             <div className="flex flex-col gap-2">
-              <a
-                href="#hero"
+              <Link
+                href="/#hero"
                 className="rounded-xl px-4 py-3 font-medium"
                 onClick={() => setMenuOpen(false)}
               >
                 {site.homeLabel}
-              </a>
+              </Link>
               {items.map((item) => (
-                <a
+                <Link
                   key={item.sectionId}
                   href={item.href}
                   className="rounded-xl px-4 py-3 font-medium"
                   onClick={() => setMenuOpen(false)}
                 >
                   {item.label}
-                </a>
+                </Link>
               ))}
               <a
                 href={contact.github}

@@ -101,10 +101,12 @@ export const experienceSection = {
   color: "#8b5cf6",
   eyebrow: "Carreira",
   title: "Experiência",
-  highlight: "& trajetória",
+  highlight: "&",
+  suffix: "trajetória",
   description:
     "Minha jornada e as tecnologias que dominei ao longo do caminho.",
+  enabled: experiences.length > 0,
   items: experiences,
-} satisfies ContentSectionConfig & { items: Experience[] };
+} satisfies ContentSectionConfig & { suffix: string; items: Experience[] };
 
 export type ExperienceSectionData = typeof experienceSection;

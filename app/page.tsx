@@ -9,28 +9,33 @@ import {
   SkillsMatrixSection,
 } from "@/components/sections";
 import {
-  blogPosts,
-  blogSection,
   certificationsSection,
   contactSection,
+  createBlogSection,
+  createProjectsSection,
   experienceSection,
+  getVisibleSections,
   hero,
-  projectsSection,
   skillsSection,
 } from "@/data";
 import type { SectionConfig } from "@/data";
-
-const navSections: SectionConfig[] = [
-  hero,
-  projectsSection,
-  experienceSection,
-  certificationsSection,
-  skillsSection,
-  blogSection,
-  contactSection,
-];
+import { getBlogPostMetadata } from "@/lib/content/posts";
+import { getProjectMetadata } from "@/lib/content/projects";
 
 export default function Home() {
+  const blogPosts = getBlogPostMetadata();
+  const projectsSection = createProjectsSection(getProjectMetadata());
+  const blogSection = createBlogSection(blogPosts);
+  const navSections = getVisibleSections<SectionConfig>([
+    hero,
+    projectsSection,
+    experienceSection,
+    certificationsSection,
+    skillsSection,
+    blogSection,
+    contactSection,
+  ]);
+
   return (
     <main className="relative">
       <Navigation data={navSections} />
